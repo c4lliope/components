@@ -44,6 +44,7 @@ class Timepicker extends React.Component {
     return (
       <Wrapper>
         <TimeInput
+          placeholder="--:--"
           value={this.state.time ? this.state.time.format("HH:mm") : ""}
           onChange={(event) => this.timeChanged(moment(event.target.value, "HH:mm"))}
           onFocus={() => this.focused()}
