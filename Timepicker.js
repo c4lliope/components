@@ -10,7 +10,7 @@ const blue = "#4a90e2"
 
 /*
  * Props:
- * `time`: a `moment` object
+ * `initialValue`: a `moment` object
  * `onChange`: a callback function that takes a `moment` object.
  * `hourOptions`: a list of allowed values for the hour
  * `minuteOptions`: a list of allowed values for the minute
@@ -20,6 +20,7 @@ class Timepicker extends React.Component {
     super(props)
 
     this.state = {
+      time: this.props.initialValue,
       open: false,
       hourPartial: null,
       minutePartial: null,
@@ -37,14 +38,14 @@ class Timepicker extends React.Component {
   }
 
   render() {
-    let selectedHour = this.state.hourPartial || (this.props.time && this.props.time.hour())
-    let selectedMinute = this.state.minutePartial || (this.props.time && this.props.time.minute())
+    let selectedHour = this.state.hourPartial || (this.state.time && this.state.time.hour())
+    let selectedMinute = this.state.minutePartial || (this.state.time && this.state.time.minute())
 
     return (
       <Wrapper>
         <TimeInput
-          value={this.props.time ? this.props.time.format("HH:mm") : ""}
-          onChange={(event) => this.props.onChange(moment(event.target.value, "HH:mm"))}
+          value={this.state.time ? this.state.time.format("HH:mm") : ""}
+          onChange={(event) => this.timeChanged(moment(event.target.value, "HH:mm"))}
           onFocus={() => this.focused()}
           onKeyPress={(e) => e.key === "Enter" && this.enter(e)}
         />
@@ -81,10 +82,13 @@ class Timepicker extends React.Component {
   }
 
   focused() {
-    this.setState({ open: true })
+    this.setState({
+      open: true,
+      time: this.state.time || moment(),
+    })
 
-    if(this.props.time == null)
-      this.props.onChange(moment())
+    if(this.state.time == null)
+      this.timeChanged(moment())
   }
 
   enter(event) {
@@ -96,7 +100,7 @@ class Timepicker extends React.Component {
     let minute = this.state.minutePartial
 
     if(hour && minute) {
-      this.props.onChange(moment(`${hour}:${minute}`, "HH:mm"))
+      this.timeChanged(moment(`${hour}:${minute}`, "HH:mm"))
       this.setState({ hourPartial: null, minutePartial: null })
     } else
       this.setState({ hourPartial: hour })
@@ -106,12 +110,17 @@ class Timepicker extends React.Component {
     let hour = this.state.hourPartial
 
     if(hour && minute) {
-      this.props.onChange(moment(`${hour}:${minute}`, "HH:mm"))
+      this.timeChanged(moment(`${hour}:${minute}`, "HH:mm"))
       this.setState({ hourPartial: null, minutePartial: null })
     } else
       this.setState({ minutePartial: minute })
 
     this.setState({open: false})
+  }
+
+  timeChanged(newTime) {
+    this.props.onChange(newTime)
+    this.setState({ time: newTime })
   }
 }
 

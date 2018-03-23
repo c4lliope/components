@@ -12,7 +12,7 @@ storiesOf("[touch] Scrolling time input", module)
     <TimePicker onChange={action("changed")}/>
   ))
   .add("with pre-set time", () => (
-    <TimePicker time={moment()} onChange={action("changed")}/>
+    <TimePicker initialValue={moment()} onChange={action("changed")}/>
   ))
   .add("with limited hour options", () => (
     <TimePicker
