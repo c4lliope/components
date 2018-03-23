@@ -21,6 +21,7 @@ class Timepicker extends React.Component {
 
     this.state = {
       time: this.props.initialValue,
+      enteredText: this.props.initialValue ? this.props.initialValue.format("HH:mm") : "",
       open: false,
       hourPartial: null,
       minutePartial: null,
@@ -45,9 +46,9 @@ class Timepicker extends React.Component {
       <Wrapper>
         <TimeInput
           placeholder="--:--"
-          value={this.state.time ? this.state.time.format("HH:mm") : ""}
-          onChange={(event) => this.timeChanged(moment(event.target.value, "HH:mm"))}
-          onFocus={() => this.focused()}
+          value={this.state.enteredText}
+          onChange={(event) => this.textEntered(event.target.value)}
+          onFocus={(e) => this.focused(e)}
           onKeyPress={(e) => e.key === "Enter" && this.enter(e)}
         />
 
@@ -80,19 +81,24 @@ class Timepicker extends React.Component {
     )
   }
 
-  focused() {
+  focused(event) {
+    event.target.select()
+
     this.setState({
       open: true,
       time: this.state.time || moment(),
     })
-
-    if(this.state.time == null)
-      this.timeChanged(moment())
   }
 
   enter(event) {
     event.target.blur()
-    this.setState({ open: false})
+
+    let time = moment(event.target.value, "HH:mm")
+    this.timeChanged(time)
+  }
+
+  textEntered(value) {
+    this.setState({ enteredText: value })
   }
 
   hourSelected(hour) {
@@ -119,7 +125,11 @@ class Timepicker extends React.Component {
 
   timeChanged(newTime) {
     this.props.onChange(newTime)
-    this.setState({ time: newTime })
+    this.setState({
+      enteredText: newTime.format("HH:mm"),
+      open: false,
+      time: newTime,
+    })
   }
 }
 
