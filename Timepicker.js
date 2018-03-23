@@ -23,8 +23,6 @@ class Timepicker extends React.Component {
       time: this.props.initialValue,
       enteredText: this.props.initialValue ? this.props.initialValue.format("HH:mm") : "",
       open: false,
-      hourPartial: null,
-      minutePartial: null,
     }
   }
 
@@ -39,17 +37,17 @@ class Timepicker extends React.Component {
   }
 
   render() {
-    let selectedHour = this.state.hourPartial || (this.state.time && this.state.time.hour())
-    let selectedMinute = this.state.minutePartial || (this.state.time && this.state.time.minute())
+    let selectedHour = this.state.time && this.state.time.hour()
+    let selectedMinute = this.state.time && this.state.time.minute()
 
     return (
       <Wrapper>
         <TimeInput
-          placeholder="--:--"
-          value={this.state.enteredText}
-          onChange={(event) => this.textEntered(event.target.value)}
+          onChange={(e) => this.setState({ enteredText: e.target.value })}
           onFocus={(e) => this.focused(e)}
           onKeyPress={(e) => e.key === "Enter" && this.enter(e)}
+          placeholder="--:--"
+          value={this.state.enteredText}
         />
 
         { this.state.open &&
@@ -92,39 +90,24 @@ class Timepicker extends React.Component {
 
   enter(event) {
     event.target.blur()
-
-    let time = moment(event.target.value, "HH:mm")
-    this.timeChanged(time)
-  }
-
-  textEntered(value) {
-    this.setState({ enteredText: value })
+    this.timeChanged(moment(event.target.value, "HH:mm"))
   }
 
   hourSelected(hour) {
-    let minute = this.state.minutePartial
-
-    if(hour && minute) {
-      this.timeChanged(moment(`${hour}:${minute}`, "HH:mm"))
-      this.setState({ hourPartial: null, minutePartial: null })
-    } else
-      this.setState({ hourPartial: hour })
+    let minute = this.state.time.minute()
+    let newTime = moment(`${hour}:${minute}`, "HH:mm")
+    this.setState({ time: newTime, enteredText: newTime.format("HH:mm") })
   }
 
   minuteSelected(minute) {
-    let hour = this.state.hourPartial
-
-    if(hour && minute) {
-      this.timeChanged(moment(`${hour}:${minute}`, "HH:mm"))
-      this.setState({ hourPartial: null, minutePartial: null })
-    } else
-      this.setState({ minutePartial: minute })
-
-    this.setState({open: false})
+    let hour = this.state.time.hour()
+    let newTime = moment(`${hour}:${minute}`, "HH:mm")
+    this.timeChanged(newTime)
   }
 
   timeChanged(newTime) {
     this.props.onChange(newTime)
+
     this.setState({
       enteredText: newTime.format("HH:mm"),
       open: false,
