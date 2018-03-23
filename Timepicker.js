@@ -12,6 +12,8 @@ const blue = "#4a90e2"
  * Props:
  * `time`: a `moment` object
  * `onChange`: a callback function that takes a `moment` object.
+ * `hourOptions`: a list of allowed values for the hour
+ * `minuteOptions`: a list of allowed values for the minute
  */
 class Timepicker extends React.Component {
   constructor(props) {
@@ -24,9 +26,17 @@ class Timepicker extends React.Component {
     }
   }
 
+  hourOptions() {
+    return this.props.hourOptions ||
+      Array.apply(null, {length: 24}).map(Number.call, Number)
+  }
+
+  minuteOptions() {
+    return this.props.minuteOptions ||
+      Array.apply(null, {length: 60}).map(Number.call, Number)
+  }
+
   render() {
-    let hour_options = [18, 19, 20, 21, 22, 23, 0, 1, 2, 3, 4]
-    let minute_options = Array.apply(null, {length: 60}).map(Number.call, Number)
     let selectedHour = this.state.hourPartial || (this.props.time && this.props.time.hour())
     let selectedMinute = this.state.minutePartial || (this.props.time && this.props.time.minute())
 
@@ -42,7 +52,7 @@ class Timepicker extends React.Component {
         { this.state.open &&
           <TouchInput>
             <Scroll>
-              {hour_options.map((hour) => (
+              {this.hourOptions().map((hour) => (
                 <TimeOption
                   innerRef={(node) => node && (hour == selectedHour) && node.scrollIntoView()}
                   key={hour}
@@ -53,7 +63,7 @@ class Timepicker extends React.Component {
             </Scroll>
 
             <Scroll>
-              {minute_options.map((minute) => (
+              {this.minuteOptions().map((minute) => (
                 <TimeOption
                   innerRef={(node) => node && (minute == selectedMinute) && node.scrollIntoView()}
                   key={minute}
