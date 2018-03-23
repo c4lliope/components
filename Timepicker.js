@@ -74,8 +74,6 @@ class Timepicker extends React.Component {
                 >{pad(minute, 2)}</TimeOption>
               ))}
             </Scroll>
-
-            <Close onClick={() => this.setState({open: false})}>X</Close>
           </TouchInput>
         }
       </Wrapper>
@@ -156,14 +154,6 @@ const Scroll = styled.div`
 const TimeOption = styled.div`
   padding: 0.5rem;
   ${({selected}) => selected && `background-color: ${blue}; color: white;`}
-`
-
-const Close = styled.div`
-  background-color: ${blue};
-  color: white;
-  grid-column: 1 / -1;
-  padding: 0.5rem;
-  text-align: center;
 `
 
 export default Timepicker
