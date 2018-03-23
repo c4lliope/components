@@ -17,27 +17,11 @@ class Timepicker extends React.Component {
   constructor(props) {
     super(props)
 
-    this.scrollOptions = {
-      behavior: "auto",
-      block: "center",
-      inline: "nearest",
-    }
-
     this.state = {
       open: false,
       hourPartial: null,
       minutePartial: null,
     }
-  }
-
-  minuteRendered(node, minute) {
-    if(node && this.props.time.minute() == minute)
-      node.scrollIntoView(this.scrollOptions)
-  }
-
-  hourRendered(node, hour) {
-    if(node && this.props.time.hour() == hour)
-      node.scrollIntoView(this.scrollOptions)
   }
 
   render() {
@@ -60,7 +44,7 @@ class Timepicker extends React.Component {
             <Scroll>
               {hour_options.map((hour) => (
                 <TimeOption
-                  innerRef={(node) => this.hourRendered(node, hour)}
+                  innerRef={(node) => node && (hour == selectedHour) && node.scrollIntoView()}
                   key={hour}
                   onClick={() => this.hourSelected(hour)}
                   selected={hour == selectedHour}
@@ -71,7 +55,7 @@ class Timepicker extends React.Component {
             <Scroll>
               {minute_options.map((minute) => (
                 <TimeOption
-                  innerRef={(node) => this.minuteRendered(node, minute)}
+                  innerRef={(node) => node && (minute == selectedMinute) && node.scrollIntoView()}
                   key={minute}
                   onClick={() => this.minuteSelected(minute)}
                   selected={minute == selectedMinute}
